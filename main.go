@@ -47,8 +47,9 @@ func copyFile(src, dst string) error {
 }
 
 var rootCmd = &cobra.Command{
-	Use:   "git-id",
-	Short: "A CLI Tool To Manage Git Profiles",
+	Use:     "gid",
+	Aliases: []string{"git-id"},
+	Short:   "A CLI Tool To Manage Git Profiles",
 }
 
 var listCmd = &cobra.Command{
@@ -120,6 +121,7 @@ var useCmd = &cobra.Command{
 				homeDir, err := os.UserHomeDir()
 				if err != nil {
 					fmt.Println(err)
+					return
 				}
 
 				srcPath := filepath.Join(configPath, "profiles", filename)
