@@ -1,0 +1,130 @@
+project_name: gid
+before:
+  hooks:
+    - go mod tidy
+    - go generate ./...
+builds:
+  - id: gid
+    main: .
+    binary: gid
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - windows
+      - darwin
+    goarch:
+      - amd64
+      - arm64
+    ldflags:
+      - -s -w
+      - -X main.version={{.Version}}
+      - -X main.commit={{.Commit}}
+      - -X main.date={{.Date}}
+      - -X main.builtBy=goreleaser
+archives:
+  - id: gid-archive
+    builds:
+      - gid
+    format: tar.gz
+    format_overrides:
+      - goos: windows
+        format: zip
+    name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+    files:
+      - README.md
+      - LICENSE*
+      - CHANGELOG*
+      - docs/*
+checksum:
+  name_template: "checksums.txt"
+snapshot:
+  name_template: "{{ incpatch .Version }}-next"
+changelog:
+  sort: asc
+  use: github
+  filters:
+    exclude:
+      - "^docs:"
+      - "^test:"
+      - "^chore:"
+      - "^style:"
+      - "^refactor:"
+      - "^ci:"
+      - "^build:"
+      - "Merge pull request"
+      - "Merge remote-tracking branch"
+      - "Merge branch"
+  groups:
+    - title: Features
+      regexp: "^.*feat[(\\w)]*:+.*$"
+      order: 0
+    - title: Bug Fixes
+      regexp: "^.*fix[(\\w)]*:+.*$"
+      order: 1
+    - title: Documentation
+      regexp: "^.*docs[(\\w)]*:+.*$"
+      order: 2
+    - title: Other
+      order: 999
+release:
+  github:
+    owner: silverlightning926
+    name: gid
+  draft: false
+  prerelease: auto
+  name_template: "v{{ .Version }}"
+  header: |
+    ## Git Profile Manager (gid) v{{ .Version }}
+
+    A CLI tool for managing multiple Git profiles.
+  footer: |
+    ## Installation
+
+    ### Using Go
+    ```bash
+    go install github.com/silverlightning926/gid@latest
+    ```
+
+    ### Using Homebrew (macOS/Linux)
+    ```bash
+    brew install --cask silverlightning926/tap/gid
+    ```
+
+    ### Using Docker
+    ```bash
+    docker run --rm silverlightning926/gid:latest
+    ```
+
+    ### Using downloaded binaries
+    Download the appropriate binary for your system from the assets below.
+homebrew_casks:
+  - name: gid
+    repository:
+      owner: silverlightning926
+      name: homebrew-tap
+    homepage: https://github.com/silverlightning926/gid
+    description: "A CLI tool for managing multiple Git profiles"
+    license: MIT
+    directory: Casks
+    conflicts:
+      - formula: gid
+    hooks:
+      post:
+        install: |
+          if system_command("/usr/bin/xattr", args: ["-h"]).exit_status == 0
+            system_command "/usr/bin/xattr", args: ["-dr", "com.apple.quarantine", "#{staged_path}/gid"]
+          end
+dockers:
+  - image_templates:
+      - "silverlightning926/gid:latest"
+      - "silverlightning926/gid:{{ .Tag }}"
+      - "silverlightning926/gid:v{{ .Major }}"
+    dockerfile: Dockerfile
+    build_flag_templates:
+      - "--pull"
+      - "--label=org.opencontainers.image.created={{.Date}}"
+      - "--label=org.opencontainers.image.title={{.ProjectName}}"
+      - "--label=org.opencontainers.image.revision={{.FullCommit}}"
+      - "--label=org.opencontainers.image.version={{.Version}}"
+    skip_push: false

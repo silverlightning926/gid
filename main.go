@@ -12,6 +12,13 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var (
+	version = "dev"
+	commit  = "none"
+	date    = "unknown"
+	builtBy = "unknown"
+)
+
 func getConfigPath() (string, error) {
 	homeDir, err := os.UserHomeDir()
 	if err != nil {
@@ -49,8 +56,20 @@ func copyFile(src, dst string) error {
 var rootCmd = &cobra.Command{
 	Use:     "gid",
 	Aliases: []string{"git-id"},
+	Version: version,
 	Short:   "A CLI Tool To Manage Git Profiles",
 	Long:    `gid is a command-line tool for managing multiple Git profiles. It allows you to easily switch between different Git configurations for different projects or contexts.`,
+}
+
+var versionCmd = &cobra.Command{
+	Use:   "version",
+	Short: "Print version information",
+	Run: func(cmd *cobra.Command, args []string) {
+		fmt.Printf("gid version %s\n", version)
+		fmt.Printf("  commit: %s\n", commit)
+		fmt.Printf("  built: %s\n", date)
+		fmt.Printf("  by: %s\n", builtBy)
+	},
 }
 
 var listCmd = &cobra.Command{
