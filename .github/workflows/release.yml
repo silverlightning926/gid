@@ -1,0 +1,60 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+  packages: write
+  id-token: write
+
+jobs:
+  goreleaser:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.21"
+          cache: true
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Run GoReleaser
+        uses: goreleaser/goreleaser-action@v5
+        with:
+          distribution: goreleaser
+          version: latest
+          args: release --clean
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+
+  notify:
+    needs: goreleaser
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - name: Notify Success
+        if: needs.goreleaser.result == 'success'
+        run: |
+          echo "🎉 Release completed successfully!"
+          echo "Check the release at: ${{ github.server_url }}/${{ github.repository }}/releases"
+
+      - name: Notify Failure
+        if: needs.goreleaser.result == 'failure'
+        run: |
+          echo "❌ Release failed!"
+          echo "Check the logs at: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
