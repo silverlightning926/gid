@@ -93,7 +93,7 @@ release:
 
     ### Using Docker
     ```bash
-    docker run --rm silverlightning926/gid:latest
+    docker run --rm ghcr.io/silverlightning926/gid:latest
     ```
 
     ### Using downloaded binaries
@@ -117,9 +117,9 @@ homebrew_casks:
           end
 dockers:
   - image_templates:
-      - "silverlightning926/gid:latest"
-      - "silverlightning926/gid:{{ .Tag }}"
-      - "silverlightning926/gid:v{{ .Major }}"
+      - "ghcr.io/silverlightning926/gid:latest"
+      - "ghcr.io/silverlightning926/gid:{{ .Tag }}"
+      - "ghcr.io/silverlightning926/gid:v{{ .Major }}"
     dockerfile: Dockerfile
     build_flag_templates:
       - "--pull"
