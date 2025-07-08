@@ -1,8 +1,12 @@
+version: 2
+
 project_name: gid
+
 before:
   hooks:
     - go mod tidy
     - go generate ./...
+
 builds:
   - id: gid
     main: .
@@ -22,24 +26,27 @@ builds:
       - -X main.commit={{.Commit}}
       - -X main.date={{.Date}}
       - -X main.builtBy=goreleaser
+
 archives:
   - id: gid-archive
-    builds:
+    ids:
       - gid
-    format: tar.gz
+    formats:
+      - tar.gz
     format_overrides:
       - goos: windows
-        format: zip
+        formats:
+          - zip
     name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
     files:
       - README.md
       - LICENSE*
       - CHANGELOG*
       - docs/*
+
 checksum:
   name_template: "checksums.txt"
-snapshot:
-  name_template: "{{ incpatch .Version }}-next"
+
 changelog:
   sort: asc
   use: github
@@ -67,6 +74,7 @@ changelog:
       order: 2
     - title: Other
       order: 999
+
 release:
   github:
     owner: silverlightning926
@@ -98,6 +106,7 @@ release:
 
     ### Using downloaded binaries
     Download the appropriate binary for your system from the assets below.
+
 homebrew_casks:
   - name: gid
     repository:
@@ -115,6 +124,7 @@ homebrew_casks:
           if system_command("/usr/bin/xattr", args: ["-h"]).exit_status == 0
             system_command "/usr/bin/xattr", args: ["-dr", "com.apple.quarantine", "#{staged_path}/gid"]
           end
+
 dockers:
   - image_templates:
       - "ghcr.io/silverlightning926/gid:latest"
