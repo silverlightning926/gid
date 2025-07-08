@@ -19,21 +19,36 @@ var (
 	builtBy = "unknown"
 )
 
-func getConfigPath() (string, error) {
+// Helper Functions
+
+func getCurrentConfigPath() (string, error) {
 	homeDir, err := os.UserHomeDir()
 	if err != nil {
 		return "", err
 	}
-	return filepath.Join(homeDir, ".config", "gid"), nil
+	return filepath.Join(homeDir, ".gitconfig"), nil
 }
 
-func getConfigFiles(dir string) ([]os.DirEntry, error) {
-	entries, err := os.ReadDir(filepath.Join(dir, "profiles"))
+func getAvailableConfigPaths() ([]string, error) {
+	homeDir, err := os.UserHomeDir()
 	if err != nil {
-		return nil, err
+		return []string{}, err
 	}
 
-	return entries, nil
+	profilesDir := filepath.Join(homeDir, ".config", "gid", "profiles")
+	entries, err := os.ReadDir(profilesDir)
+	if err != nil {
+		return []string{}, err
+	}
+
+	var paths []string
+	for _, entry := range entries {
+		fullPath := filepath.Join(profilesDir, entry.Name())
+		paths = append(paths, fullPath)
+	}
+
+	return paths, nil
+
 }
 
 func copyFile(src, dst string) error {
@@ -53,6 +68,8 @@ func copyFile(src, dst string) error {
 	return err
 }
 
+// Cobra
+
 var rootCmd = &cobra.Command{
 	Use:     "gid",
 	Aliases: []string{"git-id"},
@@ -66,13 +83,7 @@ var listCmd = &cobra.Command{
 	Short: "List Git Profiles",
 	Long:  "List all available Git profiles stored in your configuration directory.",
 	Run: func(cmd *cobra.Command, args []string) {
-		configPath, err := getConfigPath()
-		if err != nil {
-			fmt.Println(err)
-			return
-		}
-
-		entries, err := getConfigFiles(configPath)
+		paths, err := getAvailableConfigPaths()
 		if err != nil {
 			fmt.Println(err)
 			return
@@ -84,14 +95,12 @@ var listCmd = &cobra.Command{
 
 		fmt.Printf("%s %s\n",
 			hiBlue("Profiles"),
-			(grey("(" + strconv.Itoa(len(entries)) + " Found" + ")")),
+			(grey("(" + strconv.Itoa(len(paths)) + " Found" + ")")),
 		)
 
-		for _, entry := range entries {
-			filename := entry.Name()
-			profileName := strings.TrimSuffix(filename, ".gitconfig")
-
-			fmt.Printf("  • %s %s\n", green(profileName), grey("("+filename+")"))
+		for _, path := range paths {
+			fileName := filepath.Base(path)
+			fmt.Printf("  • %s %s\n", green(strings.TrimSuffix(fileName, ".gitconfig")), grey("("+fileName+")"))
 		}
 	},
 }
@@ -103,48 +112,37 @@ var useCmd = &cobra.Command{
 	Aliases: []string{"switch"},
 	Args:    cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		configPath, err := getConfigPath()
+		currentConfigPath, err := getCurrentConfigPath()
 		if err != nil {
 			fmt.Println(err)
-			return
 		}
-
-		entries, err := getConfigFiles(configPath)
+		availableConfigPaths, err := getAvailableConfigPaths()
 		if err != nil {
 			fmt.Println(err)
-			return
 		}
 
+		hiBlue := color.New(color.FgHiBlue).SprintFunc()
 		red := color.New(color.FgHiRed).SprintFunc()
 		green := color.New(color.FgGreen).SprintFunc()
 		grey := color.New(color.FgHiBlack).SprintFunc()
 
-		if len(entries) <= 0 {
+		if len(availableConfigPaths) <= 0 {
 			fmt.Printf("%s\n", red("No Profiles Found"))
 			return
 		}
 
-		for _, entry := range entries {
-			filename := entry.Name()
-			profileName := strings.TrimSuffix(filename, ".gitconfig")
+		for _, path := range availableConfigPaths {
+			fileName := filepath.Base(path)
+			profileName := strings.TrimSuffix(fileName, ".gitconfig")
 
 			if profileName == args[0] {
-				homeDir, err := os.UserHomeDir()
+				err = copyFile(path, currentConfigPath)
 				if err != nil {
 					fmt.Println(err)
 					return
 				}
 
-				srcPath := filepath.Join(configPath, "profiles", filename)
-				dstPath := filepath.Join(homeDir, ".gitconfig")
-
-				err = copyFile(srcPath, dstPath)
-				if err != nil {
-					fmt.Println(err)
-					return
-				}
-
-				fmt.Printf("Using Profile: %s %s\n", green(profileName), grey("("+filename+")"))
+				fmt.Printf("%s %s %s\n", hiBlue("Using Profile"), green(profileName), grey("("+fileName+")"))
 				return
 			}
 		}
