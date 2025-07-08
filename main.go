@@ -50,11 +50,13 @@ var rootCmd = &cobra.Command{
 	Use:     "gid",
 	Aliases: []string{"git-id"},
 	Short:   "A CLI Tool To Manage Git Profiles",
+	Long:    `gid is a command-line tool for managing multiple Git profiles. It allows you to easily switch between different Git configurations for different projects or contexts.`,
 }
 
 var listCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List Git Profiles",
+	Long:  "List all available Git profiles stored in your configuration directory.",
 	Run: func(cmd *cobra.Command, args []string) {
 		configPath, err := getConfigPath()
 		if err != nil {
@@ -89,6 +91,7 @@ var listCmd = &cobra.Command{
 var useCmd = &cobra.Command{
 	Use:     "use",
 	Short:   "Use Selected Git Profile",
+	Long:    "Switch to the specified Git profile by copying it to ~/.gitconfig.",
 	Aliases: []string{"switch"},
 	Args:    cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
