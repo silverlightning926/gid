@@ -19,6 +19,15 @@ func getConfigPath() (string, error) {
 	return filepath.Join(homeDir, ".config", "gid"), nil
 }
 
+func getConfigFiles(dir string) ([]os.DirEntry, error) {
+	entries, err := os.ReadDir(filepath.Join(dir, "profiles"))
+	if err != nil {
+		return nil, err
+	}
+
+	return entries, nil
+}
+
 var rootCmd = &cobra.Command{
 	Use:   "git-id",
 	Short: "A CLI Tool To Manage Git Profiles",
@@ -34,16 +43,18 @@ var listCmd = &cobra.Command{
 			return
 		}
 
-		entries, err := os.ReadDir(configPath + "/profiles")
+		entries, err := getConfigFiles(configPath)
 		if err != nil {
 			fmt.Println(err)
 			return
 		}
 
+		hiBlue := color.New(color.FgHiBlue).SprintFunc()
+		green := color.New(color.FgGreen).SprintFunc()
 		grey := color.New(color.FgHiBlack).SprintFunc()
 
 		fmt.Printf("%s %s\n",
-			"Profiles",
+			hiBlue("Profiles"),
 			(grey("(" + strconv.Itoa(len(entries)) + " Found" + ")")),
 		)
 
@@ -51,7 +62,7 @@ var listCmd = &cobra.Command{
 			filename := entry.Name()
 			profileName := strings.TrimSuffix(filename, ".gitconfig")
 
-			fmt.Printf("  • %s %s\n", profileName, grey("("+filename+")"))
+			fmt.Printf("  • %s %s\n", green(profileName), grey("("+filename+")"))
 		}
 	},
 }
