@@ -6,13 +6,11 @@ RUN addgroup -g 1000 -S appgroup && \
 
 WORKDIR /home/appuser
 
-COPY gid /usr/local/bin/gid
+COPY git-id /usr/local/bin/git-id
 
-RUN chown appuser:appgroup /usr/local/bin/gid && \
-    chmod +x /usr/local/bin/gid
+RUN chown appuser:appgroup /usr/local/bin/git-id && \
+    chmod +x /usr/local/bin/git-id
 
 USER appuser
 
-ENTRYPOINT ["gid"]
-
-CMD ["--help"]
+ENTRYPOINT ["git-id"]

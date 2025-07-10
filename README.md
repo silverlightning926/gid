@@ -1,4 +1,4 @@
-# gid - Git Profile Manager
+# git-id/gid - Git Profile Manager
 
 A lightweight CLI tool for managing multiple Git profiles, allowing you to easily switch between different Git configurations for different projects or contexts.
 
@@ -14,68 +14,69 @@ A lightweight CLI tool for managing multiple Git profiles, allowing you to easil
 
 ### Using Go
 ```bash
-go install github.com/silverlightning926/gid@latest
+go install github.com/silverlightning926/git-id@latest
 ```
 
 ### Using Homebrew (macOS/Linux)
 ```bash
-brew install --cask silverlightning926/tap/gid
+brew install --cask silverlightning926/tap/git-id
 ```
 
 ### Using Docker
 ```bash
-docker run --rm silverlightning926/gid:latest
+docker run --rm silverlightning926/git-id:latest
 ```
 
 ### Using Pre-built Binaries
-Download the appropriate binary for your system from the [releases page](https://github.com/silverlightning926/gid/releases).
+Download the appropriate binary for your system from the [releases page](https://github.com/silverlightning926/git-id/releases).
 
 ## Usage
+This guide is written using the full form of the command: `git-id`, but the shorter alias `gid` is also available.
 
 ### Commands
 
 #### List Profiles
 View all available Git profiles:
 ```bash
-gid list
+git-id list
 ```
 
 #### Switch Profile
 Switch to a specific Git profile:
 ```bash
-gid use <profile-name>
+git-id use <profile-name>
 # or
-gid switch <profile-name>
+git-id switch <profile-name>
 ```
 
 #### Version Information
 Display version information:
 ```bash
-gid version
+git-id version
 ```
 
 ### Examples
 
 ```bash
 # List all profiles
-$ gid list
+$ git-id list
 Profiles (2 Found)
   • work (work.gitconfig)
   • personal (personal.gitconfig)
 
 # Switch to work profile
-$ gid use work
+$ git-id use work
 Using Profile: work (work.gitconfig)
 
 # Switch to personal profile
-$ gid use personal
+$ git-id use personal
 Using Profile: personal (personal.gitconfig)
 ```
 
 ## Configuration
 
 ### Profile Directory Structure
-gid stores profiles in `~/.config/gid/profiles/`. Each profile is a standard `.gitconfig` file.
+git-id stores profiles in `~/.config/gid/profiles/`. Each profile is a standard `.gitconfig` file.
 
 ```
 ~/.config/gid/
@@ -143,7 +144,7 @@ Profile files use standard Git configuration format:
 
 ## How It Works
 
-When you run `gid use <profile-name>`, the tool:
+When you run `git-id use <profile-name>`, the tool:
 
 1. Looks for `<profile-name>.gitconfig` in `~/.config/gid/profiles/`
 2. Copies the profile file to `~/.gitconfig`
@@ -154,40 +155,40 @@ When you run `gid use <profile-name>`, the tool:
 ### Work vs Personal
 ```bash
 # Switch to work profile for company projects
-gid use work
+git-id use work
 
 # Switch to personal profile for personal projects
-gid use personal
+git-id use personal
 ```
 
 ### Multiple Organizations
 ```bash
 # Different profiles for different clients/organizations
-gid use client-a
-gid use client-b
-gid use opensource
+git-id use client-a
+git-id use client-b
+git-id use opensource
 ```
 
 ### Different Signing Keys
 ```bash
 # Use different GPG keys for different contexts
-gid use secure-work    # Uses work GPG key
-gid use personal       # Uses personal GPG key
+git-id use secure-work    # Uses work GPG key
+git-id use personal       # Uses personal GPG key
 ```
 
 ## Troubleshooting
 
 ### Profile Not Found
 ```bash
-$ gid use nonexistent
+$ git-id use nonexistent
 Profile Not Found: nonexistent
 ```
-- Check available profiles with `gid list`
+- Check available profiles with `git-id list`
 - Ensure the profile file exists in `~/.config/gid/profiles/`
 
 ### No Profiles Found
 ```bash
-$ gid list
+$ git-id list
 No Profiles Found
 ```
 - Create profile files in `~/.config/gid/profiles/`
@@ -214,8 +215,8 @@ MIT License - see [LICENSE](LICENSE) file for details.
 
 ## Support
 
-- 🐛 **Bug Reports**: [GitHub Issues](https://github.com/silverlightning926/gid/issues)
-- 💡 **Feature Requests**: [GitHub Issues](https://github.com/silverlightning926/gid/issues)
+- 🐛 **Bug Reports**: [GitHub Issues](https://github.com/silverlightning926/git-id/issues)
+- 💡 **Feature Requests**: [GitHub Issues](https://github.com/silverlightning926/git-id/issues)
 ## Changelog
 
 See [CHANGELOG.md](CHANGELOG.md) for version history and updates.

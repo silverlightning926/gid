@@ -1,6 +1,6 @@
 version: 2
 
-project_name: gid
+project_name: git-id
 
 before:
   hooks:
@@ -8,9 +8,9 @@ before:
     - go generate ./...
 
 builds:
-  - id: gid
+  - id: git-id
     main: .
-    binary: gid
+    binary: git-id
     env:
       - CGO_ENABLED=0
     goos:
@@ -28,9 +28,9 @@ builds:
       - -X main.builtBy=goreleaser
 
 archives:
-  - id: gid-archive
+  - id: git-id-archive
     ids:
-      - gid
+      - git-id
     formats:
       - tar.gz
     format_overrides:
@@ -78,12 +78,12 @@ changelog:
 release:
   github:
     owner: silverlightning926
-    name: gid
+    name: git-id
   draft: false
   prerelease: auto
   name_template: "v{{ .Version }}"
   header: |
-    ## Git Profile Manager (gid) v{{ .Version }}
+    ## Git Profile Manager (git-id) v{{ .Version }}
 
     A CLI tool for managing multiple Git profiles.
   footer: |
@@ -91,46 +91,46 @@ release:
 
     ### Using Go
     ```bash
-    go install github.com/silverlightning926/gid@latest
+    go install github.com/silverlightning926/git-id@latest
     ```
 
     ### Using Homebrew (macOS/Linux)
     ```bash
-    brew install --cask silverlightning926/tap/gid
+    brew install --cask silverlightning926/tap/git-id
     ```
 
     ### Using Docker
     ```bash
-    docker run --rm ghcr.io/silverlightning926/gid:latest
+    docker run --rm ghcr.io/silverlightning926/git-id:latest
     ```
 
     ### Using downloaded binaries
     Download the appropriate binary for your system from the assets below.
 
 homebrew_casks:
-  - name: gid
+  - name: git-id
     repository:
       owner: silverlightning926
       name: homebrew-tap
-    homepage: https://github.com/silverlightning926/gid
+    homepage: https://github.com/silverlightning926/git-id
     description: "A CLI tool for managing multiple Git profiles"
     license: MIT
     directory: Casks
     conflicts:
-      - formula: gid
+      - formula: git-id
     hooks:
       post:
         install: |
           if system_command("/usr/bin/xattr", args: ["-h"]).exit_status == 0
-            system_command "/usr/bin/xattr", args: ["-dr", "com.apple.quarantine", "#{staged_path}/gid"]
+            system_command "/usr/bin/xattr", args: ["-dr", "com.apple.quarantine", "#{staged_path}/git-id"]
           end
-          system_command "/bin/ln", args: ["-sf", "#{staged_path}/gid", "#{HOMEBREW_PREFIX}/bin/git-id"]
+          system_command "/bin/ln", args: ["-sf", "#{staged_path}/git-id", "#{HOMEBREW_PREFIX}/bin/gid"]
 
 dockers:
   - image_templates:
-      - "ghcr.io/silverlightning926/gid:latest"
-      - "ghcr.io/silverlightning926/gid:{{ .Tag }}"
-      - "ghcr.io/silverlightning926/gid:v{{ .Major }}"
+      - "ghcr.io/silverlightning926/git-id:latest"
+      - "ghcr.io/silverlightning926/git-id:{{ .Tag }}"
+      - "ghcr.io/silverlightning926/git-id:v{{ .Major }}"
     dockerfile: Dockerfile
     build_flag_templates:
       - "--pull"

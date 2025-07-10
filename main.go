@@ -89,11 +89,11 @@ func fileSHA256(filepath string) (string, error) {
 // Cobra
 
 var rootCmd = &cobra.Command{
-	Use:     "gid",
-	Aliases: []string{"git-id"},
+	Use:     "git-id",
+	Aliases: []string{"gid"},
 	Version: version,
 	Short:   "A CLI Tool To Manage Git Profiles",
-	Long:    `gid is a command-line tool for managing multiple Git profiles. It allows you to easily switch between different Git configurations for different projects or contexts.`,
+	Long:    `git-id is a command-line tool for managing multiple Git profiles. It allows you to easily switch between different Git configurations for different projects or contexts.`,
 }
 
 var statusCmd = &cobra.Command{
